@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity  // ✅ IMPORTANT: enables @PreAuthorize and @Secured
 public class SecurityConfig {
 
     @Autowired
@@ -28,14 +30,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/**") // Optional: scope of filter chain
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/admin/register", "/api/admin/login").permitAll()
-                        .anyRequest().authenticated()
-                )
                 .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/admin/register", "/api/admin/login").permitAll()  // ✅ allow login/register
+                        .anyRequest().authenticated() // ✅ all other APIs need authentication
+                )
                 .sessionManagement(sess -> sess
-                        .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS) // ✅ no session
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -53,7 +54,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder();  // ✅ Bcrypt for admin passwords
     }
 
     @Bean

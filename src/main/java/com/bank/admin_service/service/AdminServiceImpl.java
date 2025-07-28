@@ -5,6 +5,7 @@ import com.bank.admin_service.dto.AdminRegisterDTO;
 import com.bank.admin_service.dto.JwtResponseDTO;
 import com.bank.admin_service.entity.Admin;
 import com.bank.admin_service.repository.AdminRepository;
+import com.bank.admin_service.security.TokenStore;
 import com.bank.admin_service.service.AdminService;
 import com.bank.admin_service.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private TokenStore tokenStore;  // ✅ inject TokenStore
+
     @Override
     public JwtResponseDTO register(AdminRegisterDTO dto) {
         Admin admin = new Admin();
@@ -38,6 +42,10 @@ public class AdminServiceImpl implements AdminService {
         adminRepository.save(admin);
 
         String token = jwtService.generateToken(admin.getUsername());
+
+        // ✅ store token for future outgoing calls
+        tokenStore.setToken(token);
+
         return new JwtResponseDTO(token);
     }
 
@@ -49,6 +57,10 @@ public class AdminServiceImpl implements AdminService {
 
         if (auth.isAuthenticated()) {
             String token = jwtService.generateToken(dto.getUsername());
+
+            // ✅ store token for future outgoing calls
+            tokenStore.setToken(token);
+
             return new JwtResponseDTO(token);
         } else {
             throw new RuntimeException("Invalid credentials");
