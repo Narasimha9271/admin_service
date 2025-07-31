@@ -4,6 +4,7 @@ import com.bank.admin_service.dto.CustomerResponseDTO;
 import com.bank.admin_service.dto.TransactionResponseDTO;
 import com.bank.admin_service.service.AdminViewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,5 +24,12 @@ public class AdminViewController {
     @GetMapping("/transactions")
     public List<TransactionResponseDTO> getAllTransactions() {
         return adminViewService.getAllTransactions();
+    }
+
+    // ✅ NEW — Delete a customer (ADMIN only)
+    @DeleteMapping("/customers/{id}")
+    public ResponseEntity<String> deleteCustomer(@PathVariable Long id) {
+        adminViewService.deleteCustomerById(id);
+        return ResponseEntity.ok("✅ Customer deleted successfully.");
     }
 }

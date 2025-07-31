@@ -8,4 +8,5 @@ import java.util.List;
 public interface AdminViewService {
     List<CustomerResponseDTO> getAllCustomers();
     List<TransactionResponseDTO> getAllTransactions();
+    void deleteCustomerById(Long id);
 }

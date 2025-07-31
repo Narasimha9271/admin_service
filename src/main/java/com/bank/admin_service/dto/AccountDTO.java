@@ -11,5 +11,5 @@ public class AccountDTO {
     private String accountNumber;
     private String type;
     private Double minBalance;
-    private String status;     // ✅ Will be "ACTIVE" or "CLOSED"
+    private String status;
 }

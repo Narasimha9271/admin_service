@@ -15,7 +15,7 @@ public class JwtService {
     @Value("${app.jwt.secret}")
     private String jwtSecret;
 
-    private static final long EXPIRATION_TIME = 86400000; // 1 day
+    private static final long EXPIRATION_TIME = 7*86400000; // 1 day
 
     public String generateToken(String username) {
         Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
