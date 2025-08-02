@@ -30,7 +30,6 @@ public class JwtFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        // ✅ 1️⃣ Extract JWT token from header
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String username = null;
@@ -40,35 +39,30 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 username = jwtService.extractUsername(token);
             } catch (Exception e) {
-                logger.warn("⚠️ Invalid JWT token format: " + e.getMessage());
+                logger.warn("Invalid JWT token format: " + e.getMessage());
             }
         }
 
-        // ✅ 2️⃣ Validate and set authentication if not already set
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = adminDetailsService.loadUserByUsername(username);
 
             if (jwtService.validateToken(token)) {
-                // ✅ Extract role from token (e.g., ADMIN)
                 String role = jwtService.extractRole(token);
 
-                // ✅ 3️⃣ Store JWT token in credentials (previously it was null!)
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
-                                token,   // ✅ store JWT here for forwarding to other services
+                                token,
                                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
                         );
 
-                // ✅ 4️⃣ Add request details & set security context
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } else {
-                logger.warn("⚠️ JWT token validation failed");
+                logger.warn("JWT token validation failed");
             }
         }
 
-        // ✅ 5️⃣ Continue filter chain
         filterChain.doFilter(request, response);
     }
 }

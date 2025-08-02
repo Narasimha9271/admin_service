@@ -22,7 +22,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity  // ✅ Allows use of @PreAuthorize and similar annotations
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -37,18 +37,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))  // ✅ Enable CORS
                 .authorizeHttpRequests(auth -> auth
-                        // ✅ Public endpoints (login/register)
                         .requestMatchers("/api/admin/register", "/api/admin/login").permitAll()
 
-                        // ✅ Admin-only endpoints
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/banks/**").hasRole("ADMIN")
-                        .requestMatchers("/api/branches/**").hasRole("ADMIN")
-
-                        .requestMatchers(HttpMethod.DELETE, "/api/admin/customers/**").hasRole("ADMIN")
 
 
-                        // ✅ Any other request needs authentication
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -76,7 +70,6 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // ✅ CORS configuration for React frontend (localhost:5173)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();

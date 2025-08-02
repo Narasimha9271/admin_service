@@ -15,15 +15,14 @@ public class JwtService {
     @Value("${app.jwt.secret}")
     private String jwtSecret;
 
-    private static final long EXPIRATION_TIME = 7*86400000; // 1 day
+    private static final long EXPIRATION_TIME = 86400000;
 
     public String generateToken(String username) {
         Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
 
-        // ✅ Always set role as ADMIN here
         return Jwts.builder()
                 .setSubject(username)
-                .addClaims(Map.of("role", "ADMIN")) // 👈 ADD role claim
+                .addClaims(Map.of("role", "ADMIN"))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -35,7 +34,7 @@ public class JwtService {
     }
 
     public String extractRole(String token) {
-        return (String) extractAllClaims(token).get("role"); // ✅ Get role from JWT
+        return (String) extractAllClaims(token).get("role");
     }
 
     public boolean validateToken(String token) {

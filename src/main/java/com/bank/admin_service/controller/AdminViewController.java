@@ -26,7 +26,6 @@ public class AdminViewController {
         return adminViewService.getAllTransactions();
     }
 
-    // ✅ NEW — Delete a customer (ADMIN only)
     @DeleteMapping("/customers/{id}")
     public ResponseEntity<String> deleteCustomer(@PathVariable Long id) {
         adminViewService.deleteCustomerById(id);

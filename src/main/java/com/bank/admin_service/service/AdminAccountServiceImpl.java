@@ -80,7 +80,6 @@ public class AdminAccountServiceImpl implements AdminAccountService {
         );
     }
 
-    // 🔄 Helper for GET (both single object & list)
     private <T> T fetchWithJwt(String url, ParameterizedTypeReference<T> typeRef) {
         String jwt = extractJwt();
         HttpHeaders headers = new HttpHeaders();
@@ -97,7 +96,6 @@ public class AdminAccountServiceImpl implements AdminAccountService {
         return response.getBody();
     }
 
-    // ✅ Extract token from Security Context
     private String extractJwt() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getCredentials() instanceof String) {

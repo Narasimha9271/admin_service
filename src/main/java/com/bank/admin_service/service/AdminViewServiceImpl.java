@@ -77,7 +77,7 @@ public class AdminViewServiceImpl implements AdminViewService {
     private String extractJwtFromSecurityContext() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getCredentials() instanceof String) {
-            return (String) authentication.getCredentials(); // ✅ JWT token
+            return (String) authentication.getCredentials();
         }
         throw new RuntimeException("JWT token not found in SecurityContext");
     }

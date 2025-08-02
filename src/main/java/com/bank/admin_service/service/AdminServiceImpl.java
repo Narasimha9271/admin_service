@@ -6,7 +6,6 @@ import com.bank.admin_service.dto.JwtResponseDTO;
 import com.bank.admin_service.entity.Admin;
 import com.bank.admin_service.repository.AdminRepository;
 import com.bank.admin_service.security.TokenStore;
-import com.bank.admin_service.service.AdminService;
 import com.bank.admin_service.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,7 +30,7 @@ public class AdminServiceImpl implements AdminService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private TokenStore tokenStore;  // ✅ inject TokenStore
+    private TokenStore tokenStore;
 
     @Override
     public JwtResponseDTO register(AdminRegisterDTO dto) {
@@ -43,7 +42,6 @@ public class AdminServiceImpl implements AdminService {
 
         String token = jwtService.generateToken(admin.getUsername());
 
-        // ✅ store token for future outgoing calls
         tokenStore.setToken(token);
 
         return new JwtResponseDTO(token);
@@ -58,7 +56,6 @@ public class AdminServiceImpl implements AdminService {
         if (auth.isAuthenticated()) {
             String token = jwtService.generateToken(dto.getUsername());
 
-            // ✅ store token for future outgoing calls
             tokenStore.setToken(token);
 
             return new JwtResponseDTO(token);

@@ -26,7 +26,7 @@ public class RestTemplateConfig {
                 System.out.println("✅ Adding JWT to outbound request → " + token.substring(0, 15) + "...");
                 request.getHeaders().add("Authorization", "Bearer " + token);
             } else {
-                System.out.println("🚨 No JWT found in TokenStore");
+                System.out.println("No JWT found in TokenStore");
             }
             return execution.execute(request, body);
         }));
